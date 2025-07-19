@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Timer Blocker",
+  "version": "1.0",
+  "description": "Limits your daily time on YouTube",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["*://www.youtube.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_title": "YouTube Timer Blocker"
+  }
+}
