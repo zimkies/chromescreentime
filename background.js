@@ -10,16 +10,19 @@ chrome.runtime.onInstalled.addListener(() => {
 // Plan/Notes:
 // Whenever a tab is activated, add a new listener for constantly checking
 // Tab is activated whenever it is newly opened or switched to.  
-chrome.tabs.onActivated.addListener((activeInfo) => onTabActivated(activeInfo));
+chrome.tabs.onActivated.addListener(onTabActivated);
 // chrome.windows.onFocusChanged.addListener(() => onFocusChanged());
+
+// Add this to track when a new YouTube tab is opened or updated
+chrome.tabs.onUpdated.addListener(onTabUpdated);
 
 function onFocusChanged() {
   console.log("Window Focus Changed");
   checkforYoutube()
 }
 
-// Tab is updated when it's first opened but also when the URL changes.
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+
+function onTabUpdated(tabId, changeInfo, tab) {
   console.log("Tab Updated")
   if (
     changeInfo.status === "complete" &&
@@ -27,9 +30,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     tab.url &&
     tab.url.includes("youtube.com")
   ) {
-    onTabActivated(tabId);
+    checkforYoutube();
   }
-});
+}
+
 
 function getTodayString() {
   const today = new Date();
@@ -60,21 +64,23 @@ function getCurrentTab() {
 
 
 // If the current tab is Youtube, track and update the time
-function onTabActivated(activeInfo) {
+function onTabActivated(tab) {
   console.log("Tab Activated")
-  tabId = activeInfo.tabId
   checkforYoutube()
 }
 
+let interval; 
 function trackTime() {
+  if (interval) { return; }
 
   console.log("tracking time");
-  const trackTimeIntervalLengthSeconds = 1; // Runs every minute
+  const trackTimeIntervalLengthSeconds = 1; 
   const trackTimeIntervalLengthMS = 1000 * trackTimeIntervalLengthSeconds;
-  const interval = setInterval(() => {
+  interval = setInterval(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
       if (!tabs.length || !tabs[0].url.includes("youtube.com")) {
         clearInterval(interval);
+        interval = null;
         return;
       }
 
@@ -103,6 +109,7 @@ function trackTime() {
             }
           });
           clearInterval(interval);
+          interval = null;
         }
       });
     });
