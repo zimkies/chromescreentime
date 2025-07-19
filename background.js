@@ -11,7 +11,9 @@ chrome.runtime.onInstalled.addListener(() => {
 // Whenever a tab is activated, add a new listener for constantly checking
 // Tab is activated whenever it is newly opened or switched to.  
 chrome.tabs.onActivated.addListener(onTabActivated);
-// chrome.windows.onFocusChanged.addListener(() => onFocusChanged());
+
+// For when the Window changes focus
+chrome.windows.onFocusChanged.addListener(onFocusChanged);
 
 // Add this to track when a new YouTube tab is opened or updated
 chrome.tabs.onUpdated.addListener(onTabUpdated);
