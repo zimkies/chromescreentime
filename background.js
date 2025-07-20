@@ -7,8 +7,6 @@ check if the currently opened tab is a YouTube tab.
 If it is, set up an interval call that checks every second if the tab is still active and a YouTube tab.
 If it is, increment the time spent on YouTube for that day.
 If the time spent exceeds a daily limit, redirect the tab to a block page. 
-
-
 */
 const dailyLimitMinutes = 60;
 
@@ -98,8 +96,9 @@ function trackTime() {
         !tabs[0].url ||
         !tabs[0].url.includes("youtube.com")
       ) {
-        interval = null;
+        console.log("No active Youtube tab, clearing interval")
         clearInterval(interval);
+        interval = null;
         return;
       }
 
@@ -129,8 +128,8 @@ function trackTime() {
               }
             }
           });
-          interval = null;
           clearInterval(interval);
+          interval = null;
         }
       });
     });
